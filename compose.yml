@@ -1,0 +1,20 @@
+version: '3'
+services:
+  app:
+    build: .
+    image: golang:1.21rc2
+    volumes:
+      - ./src:/go/src
+    ports:
+      - 8000:80
+    tty: true
+  db:
+    build: .
+    image:  mysql:8
+    tty: true
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    ports:
+      - 13306:3306
+    restart: always
+    command: mysqld
