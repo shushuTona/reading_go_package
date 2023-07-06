@@ -16,5 +16,4 @@ services:
       - MYSQL_ROOT_PASSWORD=root
     ports:
       - 13306:3306
-    restart: always
     command: mysqld
