@@ -382,39 +382,76 @@ func main() {
 
 ### As
 
+`As` 関数も引数を2つ持つ関数で、 2つ目の引数に指定したエラー型に一致するエラーが1つ目の引数に指定したエラーに該当するかを下記のように確認することができる。
 
+```go
+type MyErr struct {
+	msg string
+}
 
+func (me *MyErr) Error() string {
+	return me.msg
+}
 
+func main() {
+	e1 := &MyErr{"e1"}
+	e2 := fmt.Errorf("wrap error %w", e1)
 
+	var me1 *MyErr
+	fmt.Println(errors.As(e2, &me1))
+	// true
 
+	e3 := errors.New("e3")
+	var me2 *MyErr
+	fmt.Println(errors.As(e3, &me2))
+	// false
+}
+```
 
+処理の流れとしては
 
+1. 2つ目の引数が `nil` の場合panicを発生させる。
+2. reflectliteを使用して、対象引数がポインター型で無いことや値がnilでないかを確認
+3. XXX
+4. XXX
+5. XXX
 
 ```go
 func As(err error, target any) bool {
 	if err == nil {
 		return false
 	}
+
+	// 1
 	if target == nil {
 		panic("errors: target cannot be nil")
 	}
+
+	// 2
 	val := reflectlite.ValueOf(target)
 	typ := val.Type()
 	if typ.Kind() != reflectlite.Ptr || val.IsNil() {
 		panic("errors: target must be a non-nil pointer")
 	}
+
+	// 3
 	targetType := typ.Elem()
 	if targetType.Kind() != reflectlite.Interface && !targetType.Implements(errorType) {
 		panic("errors: *target must be interface or implement error")
 	}
+
 	for {
+		// 4
 		if reflectlite.TypeOf(err).AssignableTo(targetType) {
 			val.Elem().Set(reflectlite.ValueOf(err))
 			return true
 		}
+
+		// 5
 		if x, ok := err.(interface{ As(any) bool }); ok && x.As(target) {
 			return true
 		}
+
 		switch x := err.(type) {
 		case interface{ Unwrap() error }:
 			err = x.Unwrap()
