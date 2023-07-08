@@ -382,7 +382,7 @@ func main() {
 
 ### As
 
-`As` 関数も引数を2つ持つ関数で、 2つ目の引数に指定したエラー型に一致するエラーが1つ目の引数に指定したエラーに該当するかを下記のように確認することができる。
+`As` 関数も引数を2つ持つ関数で、 2つ目の引数に指定した型に一致するエラーが1つ目の引数に指定したエラーに該当するかを下記のように確認することができる。
 
 ```go
 type MyErr struct {
@@ -408,13 +408,15 @@ func main() {
 }
 ```
 
-処理の流れとしては
+処理の流れとしては下記になり、1～3ではpanicが発生する可能性がある。
 
-1. 2つ目の引数が `nil` の場合panicを発生させる。
-2. reflectliteを使用して、対象引数がポインター型で無いことや値がnilでないかを確認
-3. XXX
-4. XXX
-5. XXX
+1. 2つ目の引数が `nil` の場合panicを発生させる
+2. reflectliteを使用して、2つ目の引数がポインター型で無いことや値がnilでないかを確認
+3. 2つ目の引数がインターフェース型で無いことやerrorTypeでないかを確認
+4. 下記の流れで変数errを更新しながら、targetに該当するかどうかを確認していく
+    1. errにtargetTypeを設定することができる場合trueを戻す。
+    2. errに対して `interface{ As(any) bool }` で型アサーションを行い、アサーションが成功した場合errに実装されている `As` メソッドを実行する。 `As` メソッドの結果がtrueの場合trueを戻す
+    3. `Is` 関数同様にerrに対して `Unwrap()` が実装されているか型アサーションを行い、err変数を更新しながらtargetに該当するかどうかを確認する
 
 ```go
 func As(err error, target any) bool {
@@ -440,18 +442,20 @@ func As(err error, target any) bool {
 		panic("errors: *target must be interface or implement error")
 	}
 
+	// 4
 	for {
-		// 4
+		// 4-1
 		if reflectlite.TypeOf(err).AssignableTo(targetType) {
 			val.Elem().Set(reflectlite.ValueOf(err))
 			return true
 		}
 
-		// 5
+		// 4-2
 		if x, ok := err.(interface{ As(any) bool }); ok && x.As(target) {
 			return true
 		}
 
+		// 4-3
 		switch x := err.(type) {
 		case interface{ Unwrap() error }:
 			err = x.Unwrap()
