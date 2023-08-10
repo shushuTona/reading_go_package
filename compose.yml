@@ -2,7 +2,7 @@ version: '3'
 services:
   app:
     build: .
-    image: golang:1.21rc2
+    image: golang:1.21.0
     volumes:
       - ./src:/go/src
     ports:
@@ -11,9 +11,9 @@ services:
   db:
     build: .
     image:  mysql:8
-    tty: true
     environment:
       - MYSQL_ROOT_PASSWORD=root
     ports:
       - 13306:3306
+    tty: true
     command: mysqld
