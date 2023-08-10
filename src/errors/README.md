@@ -1,6 +1,6 @@
 # errors
 
-[go1.21rc2/src/errors](https://github.com/golang/go/tree/go1.21rc2/src/errors)
+[go1.21.0/src/errors](https://github.com/golang/go/tree/go1.21.0/src/errors)
 
 errorsパッケージは下記ファイルから構成されているシンプルなパッケージで、
 
@@ -43,7 +43,7 @@ func (e *errorString) Error() string {
 }
 ```
 
-構造体 `errorString` は、 [src/builtin/builtin.go](https://github.com/golang/go/blob/go1.21rc2/src/builtin/builtin.go#L307) で定義されている `error` インターフェースを満たす構造体になっている。
+構造体 `errorString` は、 [src/builtin/builtin.go](https://github.com/golang/go/tree/go1.21.0/src/builtin/builtin.go#L307) で定義されている `error` インターフェースを満たす構造体になっている。
 
 ```go
 type error interface {
@@ -110,7 +110,7 @@ func main(){
 }
 ```
 
-ただ、下記のコメントアウトにも記載があるように、他のエラーをラップしているエラーを作成したい時は、 [fmtパッケージのErrorf関数](https://github.com/golang/go/blob/go1.21rc2/src/fmt/errors.go#L22) を使用することで、 `Unwrap` を実装したエラーを生成することができるので、独自処理などが無ければ `fmt.Errorf` でエラーを生成すれば問題なさそうではある。
+ただ、下記のコメントアウトにも記載があるように、他のエラーをラップしているエラーを作成したい時は、 [fmtパッケージのErrorf関数](https://github.com/golang/go/tree/go1.21.0/src/fmt/errors.go#L22) を使用することで、 `Unwrap` を実装したエラーを生成することができるので、独自処理などが無ければ `fmt.Errorf` でエラーを生成すれば問題なさそうではある。
 
 ```go
 // An easy way to create wrapped errors is to call [fmt.Errorf] and apply
@@ -187,7 +187,7 @@ func Join(errs ...error) error {
 }
 ```
 
-[src/errors/join.go#L15](https://github.com/golang/go/blob/go1.21rc2/src/errors/join.go#L15)
+[src/errors/join.go#L15](https://github.com/golang/go/tree/go1.21.0/src/errors/join.go#L15)
 
 `joinError` は下記のように `errs` プロパティに格納したエラーの各エラーメッセージを改行区切りで結合して `Error` メソッドの戻り値に使用している為、複数のエラー内容をまとめて表示することができている。
 
@@ -204,7 +204,7 @@ func (e *joinError) Error() string {
 }
 ```
 
-[src/errors/join.go#L40](https://github.com/golang/go/blob/go1.21rc2/src/errors/join.go#L40)
+[src/errors/join.go#L40](https://github.com/golang/go/tree/go1.21.0/src/errors/join.go#L40)
 
 ## wrap.go
 
@@ -266,7 +266,7 @@ func Unwrap(err error) error {
 
 ```
 
-[src/errors/wrap.go#L17](https://github.com/golang/go/blob/go1.21rc2/src/errors/wrap.go#L17)
+[src/errors/wrap.go#L17](https://github.com/golang/go/tree/go1.21.0/src/errors/wrap.go#L17)
 
 > // Unwrap only calls a method of the form "Unwrap() error".
 > // In particular Unwrap does not unwrap errors returned by [Join].
@@ -355,7 +355,7 @@ func Is(err, target error) bool {
 }
 ```
 
-[src/errors/wrap.go#L44](https://github.com/golang/go/blob/go1.21rc2/src/errors/wrap.go#L44)
+[src/errors/wrap.go#L44](https://github.com/golang/go/tree/go1.21.0/src/errors/wrap.go#L44)
 
 ポインター型のエラーなど比較することができないエラーは、下記のように `Is` メソッドを定義することで `Is` 関数で比較することができる。
 
@@ -476,4 +476,4 @@ func As(err error, target any) bool {
 }
 ```
 
-[src/errors/wrap.go#L93](https://github.com/golang/go/blob/go1.21rc2/src/errors/wrap.go#L93)
+[src/errors/wrap.go#L93](https://github.com/golang/go/tree/go1.21.0/src/errors/wrap.go#L93)
