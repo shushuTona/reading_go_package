@@ -8,11 +8,23 @@ import (
 
 func main() {
 	fileSet := token.NewFileSet()
-	src := []byte(`var hoge := 100`)
-	file := fileSet.AddFile("test.go", -1, len(src))
+	src := `package example
+
+// stringFunc stringを返す関数です
+func stringFunc() string {
+	return "ABC"
+}
+
+// intFunc intを返す関数です
+func intFunc() int {
+	return 100
+}
+`
+	file := fileSet.AddFile("example.go", -1, len(src))
 
 	s := scanner.Scanner{}
-	s.Init(file, src, nil, 0)
+	s.Init(file, []byte(src), nil, 0)
+	// s.Init(file, []byte(src), nil, scanner.ScanComments)
 
 	for {
 		pos, tok, lit := s.Scan()
